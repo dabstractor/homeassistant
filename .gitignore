@@ -1,0 +1,7 @@
+config/.*
+config/**/.*
+config/*.log
+config/*.log.*
+config/*.db
+config/*.db-*
+config/secrets.yaml
