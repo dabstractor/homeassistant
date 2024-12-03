@@ -1,1 +1,218 @@
+- id: '1731783815369'
+  alias: Vacuum while walking Roxanne
+  description: ''
+  triggers:
+  - device_id: 8bb2718a57aa4c4dfdb897669737f423
+    domain: device_tracker
+    entity_id: c62cc77ecd6544489b06b0a47bbf3ea6
+    type: leaves
+    trigger: device
+    zone: zone.home
+    alias: Dustin leaves home
+  conditions:
+  - condition: time
+    after: '14:00:00'
+    before: '19:00:00'
+    weekday:
+    - sun
+    - sat
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+  - alias: And it hasn’t been run yet today
+    condition: template
+    value_template: '{{ state_attr(this.entity_id, ''last_triggered'') | default(today_at(),
+      true) < today_at(''02:00'') }}'
+    enabled: true
+  actions:
+  - action: script.clean_kitchen_and_hallway
+    metadata: {}
+    data: {}
+    alias: 'Toby: clean kitchen & hallway'
+  mode: single
+- id: '1731884809946'
+  alias: Turn off tv when gone
+  description: ''
+  triggers:
+  - device_id: 8bb2718a57aa4c4dfdb897669737f423
+    domain: device_tracker
+    entity_id: c62cc77ecd6544489b06b0a47bbf3ea6
+    type: leaves
+    trigger: device
+    zone: zone.home
+  conditions: []
+  actions:
+  - type: turn_off
+    device_id: 1e5da92c0eadfe28a517f97a7cabb0b6
+    entity_id: ab688dad07918cb6748d7535b1c42e57
+    domain: remote
+  - type: turn_off
+    device_id: 34054b6bb843be9ddadabd7a71f11cd0
+    entity_id: ecf76100ae5a7441ccfa3f3037b5096b
+    domain: switch
+  mode: single
+- id: '1731970218313'
+  alias: Shut up Toby
+  description: ''
+  triggers:
+  - device_id: 8bb2718a57aa4c4dfdb897669737f423
+    domain: device_tracker
+    entity_id: c62cc77ecd6544489b06b0a47bbf3ea6
+    type: enters
+    trigger: device
+    zone: zone.home
+  conditions:
+  - alias: Dustin stops walking
+    type: is_value
+    condition: device
+    device_id: 8bb2718a57aa4c4dfdb897669737f423
+    entity_id: 57fb0586380c5abccc0ec854ab3c755f
+    domain: sensor
+    below: 0.1
+  actions:
+  - device_id: 54582cf24f78bf5908d75751857027c0
+    domain: vacuum
+    entity_id: 935a6416b3f2f3850502412c4c33ba8a
+    type: dock
+  mode: single
+- id: '1731970452496'
+  alias: Turn on salt lamp when home
+  description: ''
+  triggers:
+  - device_id: 8bb2718a57aa4c4dfdb897669737f423
+    domain: device_tracker
+    entity_id: c62cc77ecd6544489b06b0a47bbf3ea6
+    type: enters
+    trigger: device
+    zone: zone.home
+  conditions:
+  - condition: time
+    after: '18:00:00'
+  actions:
+  - type: turn_on
+    device_id: 8fd6ed4a85c0ab9b5177abb94d0bfc52
+    entity_id: 7da1401bb8ab2c42131afe77bdbce2af
+    domain: switch
+  mode: single
+- id: '1732038634514'
+  alias: Turn on Blazy when home at night
+  description: ''
+  triggers:
+  - device_id: 8bb2718a57aa4c4dfdb897669737f423
+    domain: device_tracker
+    entity_id: c62cc77ecd6544489b06b0a47bbf3ea6
+    type: enters
+    trigger: device
+    zone: zone.home
+  conditions:
+  - condition: time
+    after: '16:00:00'
+  - alias: Dustin stops walking
+    type: is_value
+    condition: device
+    device_id: 8bb2718a57aa4c4dfdb897669737f423
+    entity_id: 57fb0586380c5abccc0ec854ab3c755f
+    domain: sensor
+    below: 0.1
+  actions:
+  - type: turn_on
+    device_id: 34054b6bb843be9ddadabd7a71f11cd0
+    entity_id: ecf76100ae5a7441ccfa3f3037b5096b
+    domain: switch
+  - type: turn_on
+    device_id: 8fd6ed4a85c0ab9b5177abb94d0bfc52
+    entity_id: 7da1401bb8ab2c42131afe77bdbce2af
+    domain: switch
+  mode: single
+- id: '1732044290782'
+  alias: Blazy auto off
+  description: ''
+  triggers:
+  - type: turned_on
+    device_id: 34054b6bb843be9ddadabd7a71f11cd0
+    entity_id: ecf76100ae5a7441ccfa3f3037b5096b
+    domain: switch
+    trigger: device
+    for:
+      hours: 3
+      minutes: 0
+      seconds: 0
+  conditions: []
+  actions:
+  - type: turn_off
+    device_id: 34054b6bb843be9ddadabd7a71f11cd0
+    entity_id: ecf76100ae5a7441ccfa3f3037b5096b
+    domain: switch
+  mode: single
+- id: '1732450737559'
+  alias: Update Map Extractor camera
+  description: ''
+  use_blueprint:
+    path: PiotrMachowski/update_map_extractor.yaml
+    input:
+      vacuum: vacuum.toby
+      camera: camera.xiaomi_cloud_map_extractor
+      mode_to_handle: two_intervals
+- id: '1733153984671'
+  alias: Test leaving home
+  description: ''
+  triggers:
+  - device_id: 8bb2718a57aa4c4dfdb897669737f423
+    domain: device_tracker
+    entity_id: c62cc77ecd6544489b06b0a47bbf3ea6
+    type: leaves
+    trigger: device
+    zone: zone.home
+  conditions: []
+  actions:
+  - action: notify.notify
+    metadata: {}
+    data:
+      message: Bruh you ain’t home
+      title: Wtf bruh
+  mode: single
+- id: '1733175113274'
+  alias: Test when home
+  description: ''
+  triggers:
+  - device_id: 8bb2718a57aa4c4dfdb897669737f423
+    domain: device_tracker
+    entity_id: c62cc77ecd6544489b06b0a47bbf3ea6
+    type: enters
+    trigger: device
+    zone: zone.home
+  conditions: []
+  actions:
+  - action: notify.notify
+    metadata: {}
+    data:
+      message: Bruh you home
+      title: Sup bruh
+  mode: single
+- id: '1733175163441'
+  alias: 'Test when home and chilling '
+  description: ''
+  triggers:
+  - device_id: 8bb2718a57aa4c4dfdb897669737f423
+    domain: device_tracker
+    entity_id: c62cc77ecd6544489b06b0a47bbf3ea6
+    type: enters
+    trigger: device
+    zone: zone.home
+  conditions:
+  - type: is_value
+    condition: device
+    device_id: 8bb2718a57aa4c4dfdb897669737f423
+    entity_id: 57fb0586380c5abccc0ec854ab3c755f
+    domain: sensor
+    below: 1
+  actions:
+  - action: notify.notify
+    metadata: {}
+    data:
+      title: Let’s smoke brah
+      message: U chillin
+  mode: single
 
