@@ -14,3 +14,19 @@ http:
   trusted_proxies:
     - 127.0.0.1
     - ::1  # if using IPv6
+
+camera:
+  - platform: xiaomi_cloud_map_extractor
+    host: !secret xiaomi_cloud_map_extractor_host
+    token: !secret xiaomi_cloud_map_extractor_token
+    username: !secret xiaomi_cloud_map_extractor_username
+    password: !secret xiaomi_cloud_map_extractor_password
+    country: "us"
+    name: "Toby Map"
+    draw: ['all']
+    attributes:
+      - calibration_points
+      - room_numbers
+    scan_interval:
+      seconds: 300
+    store_map_image: true
